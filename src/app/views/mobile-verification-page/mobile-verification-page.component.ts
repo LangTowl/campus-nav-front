@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import {UserVerificationService} from '../../services/verification/user-verification.service';
 
 @Component({
   selector: 'app-mobile-verification-page',
@@ -15,11 +16,16 @@ export class MobileVerificationPageComponent {
   lName: string = "";
   password: string = "";
 
+  // Inject UserVerificationService
+  userVerificationService: UserVerificationService = inject(UserVerificationService);
+
   submitForm() {
     if (this.fName == "" || this.lName == "" || this.password == "") {
       console.log("Form is required");
     } else {
-      console.log(this.fName + " " + this.lName);
+      console.log("Attempting to verify " + this.fName + " " + this.lName + "...");
+
+      this.userVerificationService.verifyUser(this.fName, this.lName, this.password);
     }
   }
 }

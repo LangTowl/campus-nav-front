@@ -1,44 +1,34 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {catchError, map} from 'rxjs';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {catchError, map, Observable, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  // Inject http client
-  http = inject(HttpClient);
-
   // Local vars
-  private url = 'http://127.0.0.1:5000';
+  private url: string = 'http://127.0.0.1:5000';
+
+  // Inject http client
+  private http = inject(HttpClient);
 
   constructor() { }
 
-  apiGetRequest() {
-    this.http.get<{ message: string }>(this.url)
-      .pipe(
-        map(response => response.message),
-        catchError((error) => {
-          console.log(error)
-          throw error;
-        })
-      )
-      .subscribe((message) => {
-          console.log(message);
-      });
+  apiGetRequest<RESPONSE>(params?: HttpParams): Observable<RESPONSE> {
+    return this.http.get<RESPONSE>(this.url, { params }).pipe(
+      catchError((error) => {
+        console.error(error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  apiPostRequest() {
-    this.http.post<{ message: string }>(this.url, "RAH")
-      .pipe(
-        map(response => response.message),
-        catchError((error) => {
-          console.log(error)
-          throw error;
-        })
-      )
-      .subscribe((response) => {
-        console.log(response);
-      });
+  apiPostRequest<PAYLOAD, RESPONSE>(payload: PAYLOAD): Observable<RESPONSE> {
+    return this.http.post<RESPONSE>(this.url, payload).pipe(
+      catchError((error) => {
+        console.error(error);
+        return throwError(() => error);
+      })
+    );
   }
 }
