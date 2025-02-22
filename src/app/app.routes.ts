@@ -4,6 +4,7 @@ import { getPlatform } from './services/breakpoint/breakpoint.util';
 import { DesktopManagerComponent} from './views/desktop-manager/desktop-manager.component';
 import { MobileManagerComponent } from './views/mobile-manager/mobile-manager.component';
 import {MobileMapManagerComponent} from './views/mobile-map-manager/mobile-map-manager.component';
+import {authGuard} from './guards/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'map',
-    component: getPlatform() === 'mobile' ? MobileMapManagerComponent : MobileMapManagerComponent
+    component: getPlatform() === 'mobile' ? MobileMapManagerComponent : MobileMapManagerComponent,
+    canActivate: [authGuard]
   }
 ];

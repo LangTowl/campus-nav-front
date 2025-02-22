@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
+import {UserVerificationService} from '../../services/verification/user-verification.service';
 
 @Component({
   selector: 'app-mobile-map-manager',
@@ -7,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrl: './mobile-map-manager.component.scss'
 })
 export class MobileMapManagerComponent {
+  private userVerificationService: UserVerificationService = inject(UserVerificationService);
 
+
+  logout() {
+    this.userVerificationService.logout();
+  }
 }
