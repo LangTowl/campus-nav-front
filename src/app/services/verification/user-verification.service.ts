@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import {ApiService} from '../api/api.service';
+import { ApiService } from '../api/api.service';
+import {catchError, map, Observable, of} from 'rxjs';
 
 export interface VerifyUser {
   fName: string;
@@ -8,6 +9,7 @@ export interface VerifyUser {
 }
 
 export interface VerifyUserResponse {
+  status: number;
   message: string;
 }
 
@@ -21,7 +23,7 @@ export class UserVerificationService {
   constructor() { }
 
   // Load user fields
-  verifyUser(fName: string, lName: string, password: string) {
+  verifyUser(fName: string, lName: string, password: string): Observable<boolean> {
     // Build payload
     const payload: VerifyUser = {
       fName: fName,
@@ -29,9 +31,15 @@ export class UserVerificationService {
       password: password
     }
 
-    this.apiService.apiPostRequest<VerifyUser, VerifyUserResponse>(payload).subscribe(response => {
-        console.log(response.message);
-      }
+    // Call apiPostRequest and pass results to processor function
+    return this.apiService.apiPostRequest<VerifyUser, VerifyUserResponse>(payload).pipe(
+      map((response: VerifyUserResponse) => {
+        return response.status === 200;
+      }),
+      catchError(error => {
+        console.error(error);
+        return of(false);
+      })
     );
   }
 }
