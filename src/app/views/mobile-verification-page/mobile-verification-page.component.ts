@@ -13,9 +13,9 @@ import { Router } from '@angular/router';
 })
 export class MobileVerificationPageComponent {
   // Local vars
-  fName: string = "";
-  lName: string = "";
-  password: string = "";
+  fName: string = "First";
+  lName: string = "Last";
+  password: string = "Password";
 
   // Inject UserVerificationService
   userVerificationService: UserVerificationService = inject(UserVerificationService);
@@ -30,13 +30,18 @@ export class MobileVerificationPageComponent {
       this.userVerificationService.verifyUser(this.fName, this.lName, this.password)
         .subscribe(successFullLogin => {
           if (successFullLogin) {
-            console.log("Successfully verified: " + this.fName);
+            console.log("Successfully verified: " + this.fName + ".");
+            console.log("User token saved.");
 
             this.router.navigate(['/map']);
           } else {
-            console.log("Error logged in: " + this.fName);
+            console.log("Error logged in: " + this.fName + ".");
           }
         });
     }
+  }
+
+  checkToken() {
+    this.userVerificationService.checkToken();
   }
 }

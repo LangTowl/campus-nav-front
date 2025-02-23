@@ -12,6 +12,22 @@ export interface VerifyUser {
 export interface VerifyUserResponse {
   status: number;
   message: string;
+  data: [
+    { token: string }
+  ]
+}
+
+export interface ValidateUserToken {
+  header: string;
+  fName: string;
+  lName: string;
+  token: string;
+}
+
+export interface ValidateUserTokenResponse {
+  status: number;
+  message: string;
+  newToken: string;
 }
 
 @Injectable({
@@ -24,6 +40,7 @@ export class UserVerificationService {
 
   // Auth key
   private readonly authKey: string = "user-authentication-status";
+  private token: string = "";
 
   constructor() { }
 
@@ -39,7 +56,8 @@ export class UserVerificationService {
     // Call apiPostRequest and pass results to processor function
     return this.apiService.apiPostRequest<VerifyUser, VerifyUserResponse>(payload).pipe(
       map((response: VerifyUserResponse) => {
-        this.setAuthenticated(true);
+        this.setAuthenticated(response.data[0].token);
+
         return response.status === 200;
       }),
       catchError(error => {
@@ -50,13 +68,42 @@ export class UserVerificationService {
   }
 
   // Fetch authentication state
-  get authenticationStatus(): boolean {
-    return localStorage.getItem(this.authKey) === 'true';
+  fetchAuthenticationStatus(): Observable<boolean> {
+    const token = localStorage.getItem(this.authKey);
+
+    // If token exists
+    if (token) {
+
+      const payload: ValidateUserToken = {
+        header: "Authenticate",
+        fName: "First",
+        lName: "Last",
+        token: token
+      }
+
+      return this.apiService.apiPostRequest<ValidateUserToken, ValidateUserTokenResponse>(payload).pipe(
+        map((response: ValidateUserTokenResponse) => {
+          if (response.status === 200) {
+            console.log("Token: Valid.");
+            return true;
+          } else {
+            console.log("Token: Invalid.");
+            return false;
+          }
+        })
+      );
+    } else {
+      return of(false);
+    }
+  }
+
+  checkToken() {
+    console.log(!!localStorage.getItem(this.authKey));
   }
 
   // Set the authenticated status
-  setAuthenticated(isAuthenticated: boolean): void {
-    localStorage.setItem(this.authKey, String(isAuthenticated));
+  setAuthenticated(isAuthenticated: string): void {
+    localStorage.setItem(this.authKey, isAuthenticated);
   }
 
   // Un-verify user
