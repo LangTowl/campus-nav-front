@@ -31,7 +31,6 @@ export class MobileVerificationPageComponent {
         .subscribe(successFullLogin => {
           if (successFullLogin) {
             console.log("Successfully verified: " + this.fName + ".");
-            console.log("User token saved.");
 
             this.router.navigate(['/map']);
           } else {

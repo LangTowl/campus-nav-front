@@ -15,6 +15,7 @@ export class ApiService {
   constructor() { }
 
   apiGetRequest<RESPONSE>(params?: HttpParams): Observable<RESPONSE> {
+    console.log("Outgoing GET request sent...");
     return this.http.get<RESPONSE>(this.url, { params }).pipe(
       catchError((error) => {
         console.error(error);
@@ -24,6 +25,7 @@ export class ApiService {
   }
 
   apiPostRequest<PAYLOAD, RESPONSE>(payload: PAYLOAD): Observable<RESPONSE> {
+    console.log("Outgoing POST request sent...");
     return this.http.post<RESPONSE>(this.url, payload).pipe(
       catchError((error) => {
         console.error(error);

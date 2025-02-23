@@ -69,10 +69,14 @@ export class UserVerificationService {
 
   // Fetch authentication state
   fetchAuthenticationStatus(): Observable<boolean> {
-    const token = localStorage.getItem(this.authKey);
+    let token = localStorage.getItem(this.authKey);
+
+    console.log("Fetching authentication status...");
 
     // If token exists
     if (token) {
+
+      console.log("Token exists. Validating...")
 
       const payload: ValidateUserToken = {
         header: "Authenticate",
@@ -93,6 +97,8 @@ export class UserVerificationService {
         })
       );
     } else {
+      console.log("Token does not exist.")
+
       return of(false);
     }
   }
@@ -103,6 +109,7 @@ export class UserVerificationService {
 
   // Set the authenticated status
   setAuthenticated(isAuthenticated: string): void {
+    console.log("JWT stored -> " + isAuthenticated);
     localStorage.setItem(this.authKey, isAuthenticated);
   }
 
